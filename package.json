@@ -97,6 +97,14 @@
       "provider": "giscus",
       "options": {}
     },
+    "optionSchema": {
+      "provider": {
+        "type": "enum",
+        "values": [
+          "giscus"
+        ]
+      }
+    },
     "components": {
       "Comments": {
         "displayName": "Comments",
