@@ -10,12 +10,24 @@ npx quartz plugin add github:quartz-community/comments
 
 ## Usage
 
-```ts
-// quartz.layout.ts
-import * as Plugin from "./.quartz/plugins";
+```yaml title="quartz.config.yaml"
+plugins:
+  - source: github:quartz-community/comments
+    enabled: true
+    options:
+      provider: giscus
+      options: {}
+    layout:
+      position: afterBody
+      priority: 10
+```
 
-// Add to your layout
-Plugin.Comments({
+For advanced use cases, you can override in TypeScript:
+
+```ts title="quartz.ts (override)"
+import * as ExternalPlugin from "./.quartz/plugins";
+
+ExternalPlugin.Comments({
   provider: "giscus",
   options: {
     repo: "your-repo",
@@ -46,7 +58,7 @@ Plugin.Comments({
 
 ## Documentation
 
-See the [Quartz documentation](https://quartz.jzhao.xyz/) for more information.
+See the [Quartz documentation](https://quartz.jzhao.xyz/features/comments) for more information.
 
 ## License
 
