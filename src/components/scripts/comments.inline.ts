@@ -66,7 +66,7 @@ const addCleanup = (fn: () => void) => {
 };
 
 if (typeof document !== "undefined") {
-  document.addEventListener("nav", () => {
+  const setupComments = () => {
     cleanup.forEach((fn) => fn());
     cleanup.length = 0;
 
@@ -100,5 +100,8 @@ if (typeof document !== "undefined") {
     const themeChangeHandler = changeTheme;
     document.addEventListener("themechange", themeChangeHandler);
     addCleanup(() => document.removeEventListener("themechange", themeChangeHandler));
-  });
+  };
+
+  document.addEventListener("nav", setupComments);
+  document.addEventListener("render", setupComments);
 }
