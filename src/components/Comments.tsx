@@ -1,26 +1,9 @@
+import type { QuartzComponent, QuartzComponentProps } from "@quartz-community/types";
 import { classNames } from "../util/lang";
 // @ts-expect-error - inline script imported as string by esbuild loader
 import script from "./scripts/comments.inline";
 
-interface QuartzComponent {
-  (props: QuartzComponentProps): unknown;
-  css?: string;
-  beforeDOMLoaded?: string;
-  afterDOMLoaded?: string;
-}
-
-type QuartzComponentProps = {
-  ctx: unknown;
-  externalResources: unknown;
-  fileData: unknown;
-  cfg: unknown;
-  children: unknown[];
-  tree: unknown;
-  allFiles: unknown[];
-  displayClass?: "mobile-only" | "desktop-only";
-};
-
-type QuartzComponentConstructor<Options = undefined> = (opts: Options) => QuartzComponent;
+type RequiredOptsConstructor<Options> = (opts: Options) => QuartzComponent;
 
 export type CommentsOptions = {
   provider: "giscus";
@@ -81,4 +64,4 @@ export default ((opts: CommentsOptions) => {
   Comments.afterDOMLoaded = script;
 
   return Comments;
-}) satisfies QuartzComponentConstructor<CommentsOptions>;
+}) satisfies RequiredOptsConstructor<CommentsOptions>;

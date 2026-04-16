@@ -1,19 +1,5 @@
-interface QuartzComponent {
-    (props: QuartzComponentProps): unknown;
-    css?: string;
-    beforeDOMLoaded?: string;
-    afterDOMLoaded?: string;
-}
-type QuartzComponentProps = {
-    ctx: unknown;
-    externalResources: unknown;
-    fileData: unknown;
-    cfg: unknown;
-    children: unknown[];
-    tree: unknown;
-    allFiles: unknown[];
-    displayClass?: "mobile-only" | "desktop-only";
-};
+import { QuartzComponent } from '@quartz-community/types';
+
 type CommentsOptions = {
     provider: "giscus";
     options: {
