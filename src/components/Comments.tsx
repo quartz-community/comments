@@ -29,17 +29,11 @@ function boolToStringBool(b: boolean): string {
 
 export default ((opts: CommentsOptions) => {
   const Comments: QuartzComponent = ({ displayClass, fileData, cfg }: QuartzComponentProps) => {
-    // check if comments should be displayed according to frontmatter
-    const fd = fileData as Record<string, unknown>;
-    const disableComment: boolean =
-      typeof (fd.frontmatter as Record<string, unknown>)?.comments !== "undefined" &&
-      (!(fd.frontmatter as Record<string, unknown>)?.comments ||
-        (fd.frontmatter as Record<string, unknown>)?.comments === "false");
-    if (disableComment) {
+    const commentsOverride = fileData.frontmatter?.comments;
+    if (commentsOverride === false || commentsOverride === "false") {
       return <></>;
     }
 
-    const c = cfg as Record<string, unknown>;
     return (
       <div
         class={classNames(displayClass, "giscus")}
@@ -54,7 +48,7 @@ export default ((opts: CommentsOptions) => {
         data-light-theme={opts.options.lightTheme ?? "light"}
         data-dark-theme={opts.options.darkTheme ?? "dark"}
         data-theme-url={
-          opts.options.themeUrl ?? `https://${(c.baseUrl as string) ?? "example.com"}/static/giscus`
+          opts.options.themeUrl ?? `https://${cfg.baseUrl ?? "example.com"}/static/giscus`
         }
         data-lang={opts.options.lang ?? "en"}
       ></div>

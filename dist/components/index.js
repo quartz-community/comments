@@ -12,12 +12,10 @@ function boolToStringBool(b) {
 }
 var Comments_default = ((opts) => {
   const Comments = ({ displayClass, fileData, cfg }) => {
-    const fd = fileData;
-    const disableComment = typeof fd.frontmatter?.comments !== "undefined" && (!fd.frontmatter?.comments || fd.frontmatter?.comments === "false");
-    if (disableComment) {
+    const commentsOverride = fileData.frontmatter?.comments;
+    if (commentsOverride === false || commentsOverride === "false") {
       return /* @__PURE__ */ jsx(Fragment, {});
     }
-    const c = cfg;
     return /* @__PURE__ */ jsx(
       "div",
       {
@@ -32,7 +30,7 @@ var Comments_default = ((opts) => {
         "data-input-position": opts.options.inputPosition ?? "bottom",
         "data-light-theme": opts.options.lightTheme ?? "light",
         "data-dark-theme": opts.options.darkTheme ?? "dark",
-        "data-theme-url": opts.options.themeUrl ?? `https://${c.baseUrl ?? "example.com"}/static/giscus`,
+        "data-theme-url": opts.options.themeUrl ?? `https://${cfg.baseUrl ?? "example.com"}/static/giscus`,
         "data-lang": opts.options.lang ?? "en"
       }
     );
