@@ -103,6 +103,59 @@
         "values": [
           "giscus"
         ]
+      },
+      "options": {
+        "type": "object",
+        "properties": {
+          "repo": {
+            "type": "string"
+          },
+          "repoId": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "mapping": {
+            "type": "enum",
+            "values": [
+              "url",
+              "title",
+              "og:title",
+              "specific",
+              "number",
+              "pathname"
+            ]
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "reactionsEnabled": {
+            "type": "boolean"
+          },
+          "inputPosition": {
+            "type": "enum",
+            "values": [
+              "top",
+              "bottom"
+            ]
+          },
+          "lightTheme": {
+            "type": "string"
+          },
+          "darkTheme": {
+            "type": "string"
+          },
+          "themeUrl": {
+            "type": "string"
+          },
+          "lang": {
+            "type": "string"
+          }
+        }
       }
     },
     "components": {
