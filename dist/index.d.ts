@@ -16,6 +16,12 @@ type CommentsOptions = {
         inputPosition?: "top" | "bottom";
         lang?: string;
     };
+} | {
+    provider: "bluesky";
+    options?: Record<string, never>;
+} | {
+    provider: "hackernews";
+    options?: Record<string, never>;
 };
 declare const _default: (opts: CommentsOptions) => QuartzComponent;
 

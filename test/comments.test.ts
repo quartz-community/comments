@@ -187,3 +187,82 @@ describe("Comments: data attribute wiring", () => {
     expect(props?.["data-theme-url"]).toBe("https://cdn.test/theme");
   });
 });
+
+describe("Comments: Bluesky Provider", () => {
+  const bskyOpts: CommentsOptions = {
+    provider: "bluesky",
+  };
+
+  it("should create a component with bluesky options", () => {
+    const component = Comments(bskyOpts);
+    expect(component).toBeDefined();
+    expect(typeof component).toBe("function");
+  });
+
+  it("renders nothing when frontmatter.blueskyUrl is missing", () => {
+    const result = renderComments(bskyOpts, buildProps({ frontmatter: {} }));
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
+
+  it("renders the bluesky container when frontmatter.blueskyUrl is present", () => {
+    const url = "https://bsky.app/profile/user/post/123456";
+    const result = renderComments(bskyOpts, buildProps({ frontmatter: { blueskyUrl: url } }));
+    const props = getDivProps(result);
+    expect(props).not.toBeNull();
+    expect(props?.id).toBe("bluesky-comments");
+    expect(props?.["data-url"]).toBe(url);
+  });
+
+  it("suppresses bluesky comments when frontmatter.comments is false", () => {
+    const url = "https://bsky.app/profile/user/post/123456";
+    const result = renderComments(
+      bskyOpts,
+      buildProps({ frontmatter: { blueskyUrl: url, comments: false } }),
+    );
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
+});
+
+describe("Comments: Hacker News Provider", () => {
+  const hnOpts: CommentsOptions = {
+    provider: "hackernews",
+  };
+
+  it("should create a component with hackernews options", () => {
+    const component = Comments(hnOpts);
+    expect(component).toBeDefined();
+    expect(typeof component).toBe("function");
+  });
+
+  it("renders nothing when frontmatter.hnId/hnUrl is missing", () => {
+    const result = renderComments(hnOpts, buildProps({ frontmatter: {} }));
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
+
+  it("renders the HN container when frontmatter.hnId is present", () => {
+    const id = "123456";
+    const result = renderComments(hnOpts, buildProps({ frontmatter: { hnId: id } }));
+    const props = getDivProps(result);
+    expect(props).not.toBeNull();
+    expect(props?.id).toBe("hackernews-comments");
+    expect(props?.["data-id"]).toBe(id);
+  });
+
+  it("renders the HN container when frontmatter.hnUrl is present", () => {
+    const url = "https://news.ycombinator.com/item?id=123456";
+    const result = renderComments(hnOpts, buildProps({ frontmatter: { hnUrl: url } }));
+    const props = getDivProps(result);
+    expect(props).not.toBeNull();
+    expect(props?.id).toBe("hackernews-comments");
+    expect(props?.["data-id"]).toBe(url);
+  });
+
+  it("suppresses HN comments when frontmatter.comments is false", () => {
+    const id = "123456";
+    const result = renderComments(
+      hnOpts,
+      buildProps({ frontmatter: { hnId: id, comments: false } }),
+    );
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
+});
