@@ -1,6 +1,6 @@
 # @quartz-community/comments
 
-Adds a comment section to pages using Giscus (GitHub Discussions-based).
+Adds a comment section to pages using Giscus (GitHub Discussions), Bluesky, or Hacker News.
 
 ## Installation
 
@@ -15,46 +15,100 @@ plugins:
   - source: github:quartz-community/comments
     enabled: true
     options:
-      provider: giscus
+      provider: giscus # Or "bluesky" or "hackernews"
       options: {}
     layout:
       position: afterBody
       priority: 10
 ```
 
-For advanced use cases, you can override in TypeScript:
+---
 
-```ts title="quartz.ts (override)"
-import * as ExternalPlugin from "./.quartz/plugins";
+## Providers Setup
 
-ExternalPlugin.Comments({
-  provider: "giscus",
-  options: {
-    repo: "your-repo",
-    repoId: "your-repo-id",
-    category: "your-category",
-    categoryId: "your-category-id",
-  },
-});
-```
+### 1. Bluesky
+
+Pulls a reply thread directly from a Bluesky post.
+
+1. Set the provider to `"bluesky"` in `quartz.config.yaml`.
+2. Add the `blueskyUrl` field pointing to the post in the page's frontmatter:
+
+   ```markdown
+   ---
+   title: My Blog Post
+   blueskyUrl: https://bsky.app/profile/username.bsky.social/post/3mq...
+   ---
+   ```
+
+### 2. Hacker News
+
+Pulls a reply thread directly from a Hacker News item thread.
+
+1. Set the provider to `"hackernews"` in `quartz.config.yaml`.
+2. Add the `hnId` or `hnUrl` field in the page's frontmatter:
+
+   ```markdown
+   ---
+   title: My Blog Post
+   hnId: 123456
+   # Or full url:
+   # hnUrl: https://news.ycombinator.com/item?id=123456
+   ---
+   ```
+
+### 3. Giscus
+
+GitHub Discussions-based commenting system.
+
+1. Set the provider to `"giscus"`.
+2. Provide your repository options:
+
+   ```ts title="quartz.ts (override)"
+   import * as ExternalPlugin from "./.quartz/plugins";
+
+   ExternalPlugin.Comments({
+     provider: "giscus",
+     options: {
+       repo: "your-repo",
+       repoId: "your-repo-id",
+       category: "your-category",
+       categoryId: "your-category-id",
+     },
+   });
+   ```
+
+---
 
 ## Configuration
 
-| Option                     | Type                | Default     | Description                                     |
-| -------------------------- | ------------------- | ----------- | ----------------------------------------------- |
-| `provider`                 | `"giscus"`          | -           | The comment provider to use.                    |
-| `options.repo`             | `string`            | -           | The GitHub repository to use for comments.      |
-| `options.repoId`           | `string`            | -           | The ID of the GitHub repository.                |
-| `options.category`         | `string`            | -           | The GitHub Discussions category to use.         |
-| `options.categoryId`       | `string`            | -           | The ID of the GitHub Discussions category.      |
-| `options.themeUrl`         | `string`            | `undefined` | Custom theme URL for Giscus.                    |
-| `options.lightTheme`       | `string`            | `"light"`   | The light theme for Giscus.                     |
-| `options.darkTheme`        | `string`            | `"dark"`    | The dark theme for Giscus.                      |
-| `options.mapping`          | `string`            | `"url"`     | The mapping between pages and discussions.      |
-| `options.strict`           | `boolean`           | `true`      | Whether to use strict matching for discussions. |
-| `options.reactionsEnabled` | `boolean`           | `true`      | Whether to enable reactions for comments.       |
-| `options.inputPosition`    | `"top" \| "bottom"` | `"bottom"`  | The position of the comment input box.          |
-| `options.lang`             | `string`            | `"en"`      | The language for Giscus.                        |
+| Option                     | Type                                    | Default     | Description                                    |
+| -------------------------- | --------------------------------------- | ----------- | ---------------------------------------------- |
+| `provider`                 | `"giscus" \| "bluesky" \| "hackernews"` | -           | The comment provider to use.                   |
+| `options.repo`             | `string`                                | -           | (Giscus only) The GitHub repository to use.    |
+| `options.repoId`           | `string`                                | -           | (Giscus only) The ID of the GitHub repository. |
+| `options.category`         | `string`                                | -           | (Giscus only) The Discussions category to use. |
+| `options.categoryId`       | `string`                                | -           | (Giscus only) The ID of the category.          |
+| `options.themeUrl`         | `string`                                | `undefined` | (Giscus only) Custom theme URL for Giscus.     |
+| `options.lightTheme`       | `string`                                | `"light"`   | (Giscus only) The light theme for Giscus.      |
+| `options.darkTheme`        | `string`                                | `"dark"`    | (Giscus only) The dark theme for Giscus.       |
+| `options.mapping`          | `string`                                | `"url"`     | (Giscus only) Page to discussion mapping.      |
+| `options.strict`           | `boolean`                               | `true`      | (Giscus only) Use strict discussion matching.  |
+| `options.reactionsEnabled` | `boolean`                               | `true`      | (Giscus only) Enable reactions for comments.   |
+| `options.inputPosition`    | `"top" \| "bottom"`                     | `"bottom"`  | (Giscus only) The position of the input box.   |
+| `options.lang`             | `string`                                | `"en"`      | (Giscus only) The language for Giscus.         |
+
+---
+
+## Customization
+
+You can conditionally disable comments on a specific page by setting `comments: false` in that page's frontmatter:
+
+```markdown
+---
+title: Comments Disabled
+comments: false
+---
+```
 
 ## Documentation
 
