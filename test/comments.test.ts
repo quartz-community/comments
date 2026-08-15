@@ -116,27 +116,66 @@ describe("Comments: frontmatter.comments override", () => {
     expect(getDivProps(result)).not.toBeNull();
   });
 
-  it("defaults optIn to false and only hides comments when explicitly disabled", () => {
+});
+
+describe("Comments: optIn", () => {
+  it("renders comments when optIn is omitted", () => {
+    const result = renderComments(baseOpts, buildProps({ frontmatter: {} }));
+    expect(getDivProps(result)).not.toBeNull();
+  });
+
+  it("renders comments when optIn is false", () => {
     const opts: CommentsOptions = {
       ...baseOpts,
       options: { ...baseOpts.options, optIn: false },
     };
-
-    expect(getDivProps(renderComments(opts, buildProps({ frontmatter: {} })))).not.toBeNull();
-    expect(isFragmentOrEmpty(renderComments(opts, buildProps({ frontmatter: { comments: false } })))).toBe(true);
-    expect(isFragmentOrEmpty(renderComments(opts, buildProps({ frontmatter: { comments: "false" } })))).toBe(true);
+    const result = renderComments(opts, buildProps({ frontmatter: {} }));
+    expect(getDivProps(result)).not.toBeNull();
   });
 
-  it("hides comments unless frontmatter.comments is true when optIn is enabled", () => {
+  it("suppresses comments when optIn is true and frontmatter.comments is undefined", () => {
     const opts: CommentsOptions = {
       ...baseOpts,
       options: { ...baseOpts.options, optIn: true },
     };
+    const result = renderComments(opts, buildProps({ frontmatter: {} }));
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
 
-    expect(isFragmentOrEmpty(renderComments(opts, buildProps({ frontmatter: {} })))).toBe(true);
-    expect(isFragmentOrEmpty(renderComments(opts, buildProps({ frontmatter: { comments: false } })))).toBe(true);
-    expect(getDivProps(renderComments(opts, buildProps({ frontmatter: { comments: true } })))).not.toBeNull();
-    expect(getDivProps(renderComments(opts, buildProps({ frontmatter: { comments: "true" } })))).not.toBeNull();
+  it("suppresses comments when optIn is true and frontmatter.comments is false", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: { comments: false } }));
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
+
+  it("suppresses comments when optIn is true and frontmatter.comments is the string 'false'", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: { comments: "false" } }));
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
+
+  it("renders comments when optIn is true and frontmatter.comments is true", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: { comments: true } }));
+    expect(getDivProps(result)).not.toBeNull();
+  });
+
+  it("renders comments when optIn is true and frontmatter.comments is the string 'true'", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: { comments: "true" } }));
+    expect(getDivProps(result)).not.toBeNull();
   });
 });
 
