@@ -20,6 +20,7 @@ export type CommentsOptions = {
     reactionsEnabled?: boolean;
     inputPosition?: "top" | "bottom";
     lang?: string;
+    optIn?: boolean;
   };
 };
 
@@ -30,7 +31,13 @@ function boolToStringBool(b: boolean): string {
 export default ((opts: CommentsOptions) => {
   const Comments: QuartzComponent = ({ displayClass, fileData, cfg }: QuartzComponentProps) => {
     const commentsOverride = fileData.frontmatter?.comments;
-    if (commentsOverride === false || commentsOverride === "false") {
+    const optIn = opts.options.optIn ?? false;
+    const shouldRender =
+      optIn
+        ? commentsOverride === true || commentsOverride === "true"
+        : commentsOverride !== false && commentsOverride !== "false";
+
+    if (!shouldRender) {
       return <></>;
     }
 

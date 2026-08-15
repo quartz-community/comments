@@ -115,6 +115,29 @@ describe("Comments: frontmatter.comments override", () => {
     const result = renderComments(baseOpts, buildProps({ frontmatter: { comments: null } }));
     expect(getDivProps(result)).not.toBeNull();
   });
+
+  it("defaults optIn to false and only hides comments when explicitly disabled", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: false },
+    };
+
+    expect(getDivProps(renderComments(opts, buildProps({ frontmatter: {} })))).not.toBeNull();
+    expect(isFragmentOrEmpty(renderComments(opts, buildProps({ frontmatter: { comments: false } })))).toBe(true);
+    expect(isFragmentOrEmpty(renderComments(opts, buildProps({ frontmatter: { comments: "false" } })))).toBe(true);
+  });
+
+  it("hides comments unless frontmatter.comments is true when optIn is enabled", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+
+    expect(isFragmentOrEmpty(renderComments(opts, buildProps({ frontmatter: {} })))).toBe(true);
+    expect(isFragmentOrEmpty(renderComments(opts, buildProps({ frontmatter: { comments: false } })))).toBe(true);
+    expect(getDivProps(renderComments(opts, buildProps({ frontmatter: { comments: true } })))).not.toBeNull();
+    expect(getDivProps(renderComments(opts, buildProps({ frontmatter: { comments: "true" } })))).not.toBeNull();
+  });
 });
 
 describe("Comments: data attribute wiring", () => {
