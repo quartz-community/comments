@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3
+
+### Patch Changes
+
+- c35478f: Giscus is no longer loaded a second time when the page re-renders (for example after unlocking an encrypted page); a container that already has giscus is left alone.
+
 ## 1.0.2
 
 ### Patch Changes
