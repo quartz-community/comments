@@ -19,6 +19,8 @@ function page(opts: {
   container?: boolean;
 }) {
   const appended: FakeScript[] = [];
+  /** the container's current children (a navigation renders a fresh, empty container) */
+  let children: FakeScript[] = [];
   const posted: { message: unknown; origin: string }[] = [];
   const container = {
     dataset: {
@@ -36,7 +38,14 @@ function page(opts: {
       lang: "nl",
       ...opts.dataset,
     },
-    appendChild: (el: FakeScript) => appended.push(el),
+    appendChild: (el: FakeScript) => {
+      appended.push(el);
+      children.push(el);
+    },
+    querySelector: (selector: string) =>
+      selector.includes('script[src="https://giscus.app/client.js"]')
+        ? (children.find((el) => el.src === "https://giscus.app/client.js") ?? null)
+        : null,
   };
   const iframe = {
     contentWindow: {
@@ -70,7 +79,10 @@ function page(opts: {
   return {
     appended,
     posted,
-    nav: () => document.dispatchEvent(new CustomEvent("nav")),
+    nav: () => {
+      children = [];
+      document.dispatchEvent(new CustomEvent("nav"));
+    },
     render: () => document.dispatchEvent(new CustomEvent("render")),
     themechange: (theme: string) =>
       document.dispatchEvent(new CustomEvent("themechange", { detail: { theme } })),
@@ -155,14 +167,27 @@ describe("comments script", () => {
     expect(p.appended).toEqual([]);
   });
 
-  // bug (low): setup runs on `render` too and appends another client.js to the same container,
-  // so giscus loads a second time on a page whose content re-rendered (encrypted-pages
-  // dispatches `render` after an unlock and after patching the content index).
-  it.fails("doesn't load giscus a second time on a `render` event", () => {
+  // regression: setup runs on `render` too (encrypted-pages dispatches it after an unlock) and
+  // used to append another client.js to the same container, loading giscus a second time.
+  it("doesn't load giscus a second time on a `render` event", () => {
     const p = page({ savedTheme: "light" });
     runInline(script);
     p.nav();
     p.render();
     expect(p.appended).toHaveLength(1);
+  });
+
+  it("keeps one giscus and one theme listener after a nav and two `render`s", () => {
+    const p = page({ savedTheme: "light" });
+    runInline(script);
+    p.nav();
+    p.render();
+    p.render();
+    expect(p.appended).toHaveLength(1);
+    p.themechange("dark");
+    expect(p.posted).toHaveLength(1);
+
+    p.nav(); // the next page still gets its own giscus
+    expect(p.appended).toHaveLength(2);
   });
 });
