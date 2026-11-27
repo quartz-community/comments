@@ -75,6 +75,20 @@ if (typeof document !== "undefined") {
       return;
     }
 
+    // `render` (e.g. encrypted-pages after an unlock) runs this again on the same page: giscus is
+    // already loading or loaded in this container, so don't load it a second time.
+    const alreadyLoaded = giscusContainer.querySelector(
+      'script[src="https://giscus.app/client.js"], iframe.giscus-frame',
+    );
+    if (!alreadyLoaded) {
+      giscusContainer.appendChild(createGiscusScript(giscusContainer));
+    }
+
+    document.addEventListener("themechange", changeTheme);
+    addCleanup(() => document.removeEventListener("themechange", changeTheme));
+  };
+
+  const createGiscusScript = (giscusContainer: GiscusElement) => {
     const giscusScript = document.createElement("script");
     giscusScript.src = "https://giscus.app/client.js";
     giscusScript.async = true;
@@ -95,11 +109,7 @@ if (typeof document !== "undefined") {
       giscusScript.setAttribute("data-theme", getThemeUrl(getThemeName(theme)));
     }
 
-    giscusContainer.appendChild(giscusScript);
-
-    const themeChangeHandler = changeTheme;
-    document.addEventListener("themechange", themeChangeHandler);
-    addCleanup(() => document.removeEventListener("themechange", themeChangeHandler));
+    return giscusScript;
   };
 
   document.addEventListener("nav", setupComments);
