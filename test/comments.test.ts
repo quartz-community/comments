@@ -115,6 +115,68 @@ describe("Comments: frontmatter.comments override", () => {
     const result = renderComments(baseOpts, buildProps({ frontmatter: { comments: null } }));
     expect(getDivProps(result)).not.toBeNull();
   });
+
+});
+
+describe("Comments: optIn", () => {
+  it("renders comments when optIn is omitted", () => {
+    const result = renderComments(baseOpts, buildProps({ frontmatter: {} }));
+    expect(getDivProps(result)).not.toBeNull();
+  });
+
+  it("renders comments when optIn is false", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: false },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: {} }));
+    expect(getDivProps(result)).not.toBeNull();
+  });
+
+  it("suppresses comments when optIn is true and frontmatter.comments is undefined", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: {} }));
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
+
+  it("suppresses comments when optIn is true and frontmatter.comments is false", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: { comments: false } }));
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
+
+  it("suppresses comments when optIn is true and frontmatter.comments is the string 'false'", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: { comments: "false" } }));
+    expect(isFragmentOrEmpty(result)).toBe(true);
+  });
+
+  it("renders comments when optIn is true and frontmatter.comments is true", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: { comments: true } }));
+    expect(getDivProps(result)).not.toBeNull();
+  });
+
+  it("renders comments when optIn is true and frontmatter.comments is the string 'true'", () => {
+    const opts: CommentsOptions = {
+      ...baseOpts,
+      options: { ...baseOpts.options, optIn: true },
+    };
+    const result = renderComments(opts, buildProps({ frontmatter: { comments: "true" } }));
+    expect(getDivProps(result)).not.toBeNull();
+  });
 });
 
 describe("Comments: data attribute wiring", () => {
